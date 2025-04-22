@@ -1,20 +1,15 @@
 <?php
- 
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
 
-'headers' => [
-    'Accept' => 'application/json',
-    'Authorization' => 'Bearer '.$accessToken,
-]
- 
-Route::group([
-    'middleware' => 'api',
-    'prefix' => 'auth'
-], function ($router) {
-    Route::post('/register', [AuthController::class, 'register'])->name('register');
-    Route::post('/login', [AuthController::class, 'login'])->name('login');
-    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api')->name('logout');
-    Route::post('/refresh', [AuthController::class, 'refresh'])->middleware('auth:api')->name('refresh');
-    Route::post('/profile', [AuthController::class, 'profile'])->middleware('auth:api')->name('profile');
+// Rutas públicas
+Route::post('/auth/register', [AuthController::class, 'register']);
+Route::post('/auth/login', [AuthController::class, 'login'])->name('login');
+
+// Rutas protegidas (requieren autenticación)
+Route::middleware('auth:api')->group(function () {
+    Route::post('/auth/profile', [AuthController::class, 'profile']);
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
+    Route::post('/auth/refresh', [AuthController::class, 'refresh']);
 });
